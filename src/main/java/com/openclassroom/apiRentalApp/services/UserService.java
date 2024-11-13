@@ -1,6 +1,8 @@
 package com.openclassroom.apiRentalApp.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -8,7 +10,7 @@ import com.openclassroom.apiRentalApp.models.User;
 import com.openclassroom.apiRentalApp.repositories.UserRepository;
 
 @Service
-public class UserService {
+public class UserService implements org.springframework.security.core.userdetails.UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
@@ -28,6 +30,13 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void loginUser(String email, String password) {
+        User user = userRepository.findByEmail(email);
+        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
+            throw new UsernameNotFoundException("Invalid email or password");
+        }
+    }
+
     public boolean userExists(String name) {
         return userRepository.findByName(name) != null;
     }
@@ -35,5 +44,17 @@ public class UserService {
     public String getPassword(String name) {
         User user = userRepository.findByName(name);
         return user != null ? user.getPassword() : null;
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
+        User user = userRepository.findByName(name);
+        if (user == null) {
+            throw new UsernameNotFoundException("User not found");
+        }
+        return org.springframework.security.core.userdetails.User.withUsername(user.getName())
+                .password(user.getPassword())
+                .roles("USER")
+                .build();
     }
 }

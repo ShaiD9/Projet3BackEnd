@@ -17,7 +17,7 @@ public class User {
     private String password;
     private String email;
 
-    // Getters and setters
+    // Getters et setters
     public Long getId() {
         return id;
     }

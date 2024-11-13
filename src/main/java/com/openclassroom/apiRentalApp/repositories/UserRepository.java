@@ -5,4 +5,5 @@ import com.openclassroom.apiRentalApp.models.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     User findByName(String Name);
+    User findByEmail(String Name);
 }
