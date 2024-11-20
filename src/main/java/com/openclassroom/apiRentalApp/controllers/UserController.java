@@ -1,7 +1,7 @@
 package com.openclassroom.apiRentalApp.controllers;
 
 import com.openclassroom.apiRentalApp.models.User;
-import com.openclassroom.apiRentalApp.services.JWTService;
+import com.openclassroom.apiRentalApp.services.JwtService;
 import com.openclassroom.apiRentalApp.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
-    private final JWTService jwtService;
+    private final JwtService jwtService;
 
-    public UserController(UserService userService, JWTService jwtService) {
+    public UserController(UserService userService, JwtService jwtService) {
         this.userService = userService;
         this.jwtService = jwtService;
     }

@@ -2,7 +2,7 @@ package com.openclassroom.apiRentalApp.configuration;
 
 import com.openclassroom.apiRentalApp.filters.JwtAuthenticationFilter;
 import com.openclassroom.apiRentalApp.filters.JwtAuthorizationFilter;
-import com.openclassroom.apiRentalApp.services.JWTService;
+import com.openclassroom.apiRentalApp.services.JwtService;
 import com.openclassroom.apiRentalApp.services.UserService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,10 +21,10 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SpringSecurityConfig {
 
     private final UserService userService;
-    private final JWTService jwtService;
+    private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
 
-    public SpringSecurityConfig(UserService userService, JWTService jwtService, PasswordEncoder passwordEncoder) {
+    public SpringSecurityConfig(UserService userService, JwtService jwtService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.jwtService = jwtService;
         this.passwordEncoder = passwordEncoder;

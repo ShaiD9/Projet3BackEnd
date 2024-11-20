@@ -2,7 +2,7 @@ package com.openclassroom.apiRentalApp.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.openclassroom.apiRentalApp.models.User;
-import com.openclassroom.apiRentalApp.services.JWTService;
+import com.openclassroom.apiRentalApp.services.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,9 +18,9 @@ import java.util.Collections;
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
-    private final JWTService jwtService;
+    private final JwtService jwtService;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JWTService jwtService) {
+    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, JwtService jwtService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
     }
@@ -32,7 +32,12 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             Authentication authentication = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword(), Collections.emptyList());
             return authenticationManager.authenticate(authentication);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new AuthenticationException("Failed to parse authentication request body") {
+                @Override
+                public String getMessage() {
+                    return e.getMessage();
+                }
+            };
         }
     }
 
