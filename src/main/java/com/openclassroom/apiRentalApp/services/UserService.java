@@ -1,32 +1,26 @@
 package com.openclassroom.apiRentalApp.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.openclassroom.apiRentalApp.models.User;
+import com.openclassroom.apiRentalApp.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.openclassroom.apiRentalApp.models.User;
-import com.openclassroom.apiRentalApp.repositories.UserRepository;
-
 @Service
-public class UserService implements org.springframework.security.core.userdetails.UserDetailsService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void registerUser(String name, String password, String email) {
-        String encodedPassword = passwordEncoder.encode(password);
-        User user = new User();
-        user.setName(name);
-        user.setPassword(encodedPassword);
-        user.setEmail(email);
+    public void registerUser(User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
     }
 
@@ -37,24 +31,16 @@ public class UserService implements org.springframework.security.core.userdetail
         }
     }
 
-    public boolean userExists(String name) {
-        return userRepository.findByName(name) != null;
-    }
-
-    public String getPassword(String name) {
-        User user = userRepository.findByName(name);
-        return user != null ? user.getPassword() : null;
-    }
-
     @Override
-    public UserDetails loadUserByUsername(String name) throws UsernameNotFoundException {
-        User user = userRepository.findByName(name);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        User user = userRepository.findByEmail(email);
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
-        return org.springframework.security.core.userdetails.User.withUsername(user.getName())
+        return org.springframework.security.core.userdetails.User
+                .withUsername(user.getEmail())
                 .password(user.getPassword())
-                .roles("USER")
+                .authorities("USER")
                 .build();
     }
 }
